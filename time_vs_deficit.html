@@ -29,19 +29,7 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>The Impact of Question 2</h1>
-        <p class="subtitle">Both options balance the budget this year. Next year, we remain in the red regardless—but the vote decides how deep the additional cuts will be.</p>
 
-        <div class="legend-container">
-            <div class="legend-item"><div class="box-no"></div> If we vote NO</div>
-            <div class="legend-item"><div class="box-yes"></div> If we vote YES</div>
-        </div>
-
-        <div class="chart-box">
-            <div id="dataviz"></div>
-        </div>
-    </div>
 
     <script>
         // Widened the canvas to 1000px to give text more horizontal room
@@ -85,11 +73,6 @@
         years.forEach(year => {
             svg.append("text").attr("class", "axis-text").attr("x", x0(year) + x0.bandwidth()/2).attr("y", innerHeight + 30).attr("text-anchor", "middle").text(year);
         });
-
-        // Bottom text regarding midyear cuts
-        svg.append("text").attr("class", "cut-text").attr("x", x0("Year 1: 2025-26") + x0.bandwidth()/2).attr("y", innerHeight + 55).text("These balances are over and above").append("tspan").attr("x", x0("Year 1: 2025-26") + x0.bandwidth()/2).attr("dy", "1.2em").text("the $2.8M mid-year cuts.");
-        
-        svg.append("text").attr("class", "cut-text").attr("x", x0("Year 2: 2026-27") + x0.bandwidth()/2).attr("y", innerHeight + 55).text("Both budget deficits are over and above").append("tspan").attr("x", x0("Year 2: 2026-27") + x0.bandwidth()/2).attr("dy", "1.2em").text("the $3.5M mid-year cuts.");
 
         // --- DRAW THE BARS & ANNOTATIONS ---
         
