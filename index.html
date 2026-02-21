@@ -121,7 +121,7 @@
             svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(156.4) - y(159.2)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
             addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(159.2) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
 
-            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(159.2), "$5.0M", "Gap");
+            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(156.4), "$5M", "Gap");
         }
 
         function update(isYes) {
