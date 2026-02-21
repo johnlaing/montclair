@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montclair Question 2 - Receipt</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f7f6; padding: 20px; color: #333; line-height: 1.6; }
+        .wrapper { max-width: 900px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { text-align: center; margin-bottom: 5px; color: #2c3e50; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .receipt-container { max-width: 700px; margin: 0 auto; border: 1px solid #ddd; background: #fff; padding: 30px; border-radius: 4px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); font-family: "Courier New", Courier, monospace; }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
+        .receipt-row.bold { font-weight: bold; }
+        .receipt-row.total { border-top: 1px solid #333; padding-top: 10px; margin-top: 10px; font-size: 18px; }
+        .divider { border-bottom: 1px dashed #ccc; margin: 20px 0; }
+        .money-no { color: #c0392b; }
+        .money-yes { color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Understanding Question 2</h1>
+        <p class="subtitle">The Bank Receipt: A simple ledger of the budget impact</p>
+
+        <div class="receipt-container">
+            <div class="receipt-header">
+                <h2>MONTCLAIR PUBLIC SCHOOLS</h2>
+                <p>Referendum Q2 Projection Ledger</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3 style="text-align: center; border-bottom: 1px solid #000; padding-bottom: 5px;">VOTE NO</h3>
+                    <div class="receipt-row bold"><span>2025-26 YEAR 1</span></div>
+                    <div class="receipt-row"><span>Starting Gap</span><span class="money-no">-$5.00M</span></div>
+                    <div class="receipt-row"><span>State Loan</span><span class="money-yes">+$5.00M</span></div>
+                    <div class="receipt-row"><span>Mid-Year Cuts</span><span class="money-no">-$2.80M</span></div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="receipt-row bold"><span>2026-27 YEAR 2</span></div>
+                    <div class="receipt-row"><span>Loan Repayment/Loss</span><span class="money-no">-$1.85M</span></div>
+                    <div class="receipt-row"><span>Annualized Cuts</span><span class="money-no">-$3.50M</span></div>
+                    <div class="receipt-row total bold"><span>Resulting Gap</span><span class="money-no">-$10.00M</span></div>
+                </div>
+
+                <div>
+                    <h3 style="text-align: center; border-bottom: 1px solid #000; padding-bottom: 5px;">VOTE YES</h3>
+                    <div class="receipt-row bold"><span>2025-26 YEAR 1</span></div>
+                    <div class="receipt-row"><span>Starting Gap</span><span class="money-no">-$5.00M</span></div>
+                    <div class="receipt-row"><span>Tax Levy (Permanent)</span><span class="money-yes">+$5.00M</span></div>
+                    <div class="receipt-row"><span>Mid-Year Cuts</span><span class="money-no">-$2.80M</span></div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="receipt-row bold"><span>2026-27 YEAR 2</span></div>
+                    <div class="receipt-row"><span>State Aid Adjust</span><span style="color:#888;">$0.00M</span></div>
+                    <div class="receipt-row"><span>Annualized Cuts</span><span class="money-no">-$3.50M</span></div>
+                    <div class="receipt-row total bold"><span>Resulting Gap</span><span class="money-no">-$3.70M</span></div>
+                </div>
+            </div>
+            
+            <div class="receipt-header" style="border-top: 2px dashed #ccc; border-bottom: none; margin-top: 30px; padding-top: 15px;">
+                <p style="font-family: sans-serif; font-size: 12px; color: #666;">* All figures shown in millions.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
