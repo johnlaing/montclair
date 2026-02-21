@@ -3,126 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montclair Q2 Referendum Impact</title>
+    <title>Montclair Referendum Impact</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #ffffff; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; }
-        .chart-box { border: 1px solid #ddd; padding: 15px; flex: 1; min-width: 500px; position: relative; }
-        h1 { text-align: center; font-size: 24px; margin-bottom: 30px; }
-        .controls { text-align: center; margin-bottom: 20px; }
-        .toggle-container { display: inline-flex; background: #f0f0f0; padding: 5px; border-radius: 8px; cursor: pointer; border: 1px solid #ccc; }
-        .toggle-btn { padding: 8px 20px; border-radius: 4px; font-weight: bold; }
-        .toggle-btn.active { background: #333; color: white; }
-        .chart-title { text-align: center; font-weight: bold; margin-bottom: 10px; color: #555; }
-        
-        /* Bar Colors from Mockup */
-        .bar-rev { fill: #4a71be; }
-        .bar-exp { fill: #54ad66; }
-        .bar-aid { fill: #ffc000; } /* Gold for No */
-        .bar-levy { fill: #5bace3; } /* Light Blue for Yes */
-        .cut-box { fill: #e2efda; stroke: #000; stroke-dasharray: 4; }
-        .gap-arrow { stroke: #ed7d31; stroke-width: 2; marker-end: url(#arrowhead); marker-start: url(#arrowhead); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; padding: 20px; color: #333; }
+        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+        .chart-box { border: 1px solid #eee; padding: 20px; width: 520px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .controls { text-align: center; margin-bottom: 30px; }
+        .toggle-btn { padding: 12px 24px; cursor: pointer; border: 1px solid #333; background: #f9f9f9; font-weight: bold; font-size: 16px; border-radius: 4px; transition: 0.2s; }
+        .active { background: #333; color: white; }
+        h1 { text-align: center; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+        .label-bold { font-weight: bold; font-size: 13px; }
+        .unit-note { font-size: 12px; color: #888; text-align: right; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <h1>Montclair Referendum Impact</h1>
+    <h1>Montclair School Budget Impact</h1>
+    <p class="subtitle">Visualizing the 2025-26 Referendum Question 2</p>
 
     <div class="controls">
-        <div class="toggle-container" onclick="toggleVote()">
-            <div id="no-btn" class="toggle-btn active">No on Q2</div>
-            <div id="yes-btn" class="toggle-btn">Yes on Q2</div>
-        </div>
+        <button id="no-btn" class="toggle-btn active" onclick="update(false)">No on Q2</button>
+        <button id="yes-btn" class="toggle-btn" onclick="update(true)">Yes on Q2</button>
     </div>
 
     <div class="container">
         <div class="chart-box">
-            <div class="chart-title">2025-26 As Is (zoomed in)</div>
-            <div id="as-is-chart"></div>
-        </div>
-
-        <div class="chart-box">
-            <div id="dynamic-title" class="chart-title">2025-26 No on Q2 (zoomed in)</div>
-            <div id="comparison-chart"></div>
-        </div>
-    </div>
-
-    <script>
-        let isYes = false;
-        const data = { rev: 154.2, exp: 159.2, gap: 5.0, cuts: 2.8 };
-
-        const margin = {top: 40, right: 30, bottom: 40, left: 50},
-              width = 500 - margin.left - margin.right,
-              height = 450 - margin.top - margin.bottom;
-
-        function setupChart(id) {
-            const svg = d3.select(id).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
-            
-            // Define Arrowhead
-            svg.append("defs").append("marker")
-                .attr("id", "arrowhead").attr("viewBox", "0 0 10 10")
-                .attr("refX", "5").attr("refY", "5").attr("markerWidth", "6")
-                .attr("markerHeight", "6").attr("orient", "auto")
-                .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("fill", "#ed7d31");
-
-            return svg;
-        }
-
-        const svgStatic = setupChart("#as-is-chart");
-        const svgDynamic = setupChart("#comparison-chart");
-
-        const x = d3.scaleBand().range([0, width]).domain(["Revenue", "Expenditure"]).padding(0.4);
-        const y = d3.scaleLinear().range([height, 0]).domain([140, 175]);
-
-        function draw() {
-            [svgStatic, svgDynamic].forEach(s => s.selectAll("*").filter(":not(defs)").remove());
-
-            // Common Axes
-            [svgStatic, svgDynamic].forEach(s => {
-                s.append("g").call(d3.axisLeft(y).ticks(8).tickFormat(d => d.toFixed(1)));
-                s.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-            });
-
-            // --- AS IS CHART ---
-            svgStatic.append("rect").attr("class", "bar-rev").attr("x", x("Revenue")).attr("y", y(data.rev)).attr("width", x.bandwidth()).attr("height", height - y(data.rev));
-            svgStatic.append("rect").attr("class", "bar-exp").attr("x", x("Expenditure")).attr("y", y(data.exp)).attr("width", x.bandwidth()).attr("height", height - y(data.exp));
-            
-            // Mid year cuts box on As-Is
-            svgStatic.append("rect").attr("class", "cut-box").attr("x", x("Expenditure")).attr("y", y(data.exp + data.cuts)).attr("width", x.bandwidth()).attr("height", y(data.exp) - y(data.exp + data.cuts));
-            svgStatic.append("text").attr("x", x("Expenditure") + x.bandwidth()/2).attr("y", y(data.exp + 1.4)).attr("text-anchor", "middle").attr("font-size", "11px").text("Mid year cuts $2.8");
-
-            // Gap Arrow & Label
-            svgStatic.append("line").attr("class", "gap-arrow").attr("x1", x("Revenue") + x.bandwidth() + 15).attr("y1", y(data.rev)).attr("x2", x("Revenue") + x.bandwidth() + 15).attr("y2", y(data.exp));
-            svgStatic.append("text").attr("x", x("Revenue") + x.bandwidth() + 15).attr("y", y(data.exp + 2)).attr("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "bold").text(`$${data.gap} gap`);
-
-            // --- DYNAMIC CHART ---
-            svgDynamic.append("rect").attr("class", "bar-rev").attr("x", x("Revenue")).attr("y", y(data.rev)).attr("width", x.bandwidth()).attr("height", height - y(data.rev));
-            
-            // Add the "Fix" (Loan or Levy)
-            svgDynamic.append("rect").attr("class", isYes ? "bar-levy" : "bar-aid")
-                .attr("x", x("Revenue")).attr("y", y(data.rev + data.gap)).attr("width", x.bandwidth()).attr("height", y(data.rev) - y(data.rev + data.gap));
-            
-            svgDynamic.append("text").attr("x", x("Revenue") + x.bandwidth()/2).attr("y", y(data.rev + 2.5)).attr("text-anchor", "middle").attr("font-size", "10px")
-                .text(isYes ? "Tax Levy $5.0" : "Advance of State Aid $5.0");
-
-            svgDynamic.append("rect").attr("class", "bar-exp").attr("x", x("Expenditure")).attr("y", y(data.exp)).attr("width", x.bandwidth()).attr("height", height - y(data.exp));
-            svgDynamic.append("rect").attr("class", "cut-box").attr("x", x("Expenditure")).attr("y", y(data.exp + data.cuts)).attr("width", x.bandwidth()).attr("height", y(data.exp) - y(data.exp + data.cuts));
-        }
-
-        function toggleVote() {
-            isYes = !isYes;
-            document.getElementById('no-btn').classList.toggle('active');
-            document.getElementById('yes-btn').classList.toggle('active');
-            document.getElementById('dynamic-title').innerText = isYes ? "2025-26 Yes on Q2 (zoomed in)" : "2025-26 No on Q2 (zoomed in)";
-            draw();
-        }
-
-        draw();
-    </script>
-</body>
-</html>
+            <div style="text-align:center; font-weight:bold; margin-bottom:10px;">Current State (Before Q2)</div>
