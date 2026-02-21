@@ -121,7 +121,6 @@
         // SAFELY BUILDING THE 'NO' TEXT (Moved higher up and stacked tightly)
         const annNo = g2026.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 95).attr("fill", "#c0392b").attr("opacity", 0);
         annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).text("State Aid is $11.85M.");
-        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").text("Loan repayment.");
         annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").attr("class", "alert-text").text("Need $10.0M");
         annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("ADDITIONAL cuts.");
         annNo.transition().delay(1200).duration(500).attr("opacity", 1);
@@ -138,7 +137,6 @@
         // SAFELY BUILDING THE 'YES' TEXT (Moved higher up and stacked tightly)
         const annYes = g2026.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 95).attr("fill", "#1565c0").attr("opacity", 0);
         annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).text("Tax Levy carries over.");
-        annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.3em").text("No loans to repay.");
         annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.3em").attr("class", "alert-text").text("Need $3.7M");
         annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("ADDITIONAL cuts.");
         annYes.transition().delay(1200).duration(500).attr("opacity", 1);
