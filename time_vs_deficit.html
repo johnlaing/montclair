@@ -103,6 +103,7 @@
         g2025.append("text").attr("class", "bar-amount").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 55).attr("fill", "#1565c0").text("$0");
         g2025.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 35).text("Balanced with").append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("$5.0M Tax Levy");
 
+
         // YEAR 2: 2026-27 (The Cliff)
         const g2026 = svg.append("g").attr("transform", `translate(${x0("Year 2: 2026-27")},0)`);
 
@@ -114,11 +115,13 @@
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", y(gapNo) + 30).attr("fill", "#fff").attr("opacity", 0)
              .transition().delay(1000).duration(500).attr("opacity", 1).text("-$10.0M");
              
-        g2026.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 80).attr("fill", "#c0392b").attr("opacity", 0)
-             .transition().delay(1200).duration(500).attr("opacity", 1)
-             .text("State Aid is $11.85M.")
-             .append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("Must repay $5M loan.")
-             .append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("Need $10.0M ADDITIONAL cuts.");
+        // SAFELY BUILDING THE 'NO' TEXT BEFORE ANIMATING
+        const annNo = g2026.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 80).attr("fill", "#c0392b").attr("opacity", 0);
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).text("State Aid is $11.85M.");
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("Must repay $5M loan.");
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("Need $10.0M ADDITIONAL cuts.");
+        annNo.transition().delay(1200).duration(500).attr("opacity", 1);
+
 
         // Yes Bar 2026 (-3.7M Gap)
         const gapYes = -3.7;
@@ -128,11 +131,13 @@
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", y(gapYes) + 30).attr("fill", "#fff").attr("opacity", 0)
              .transition().delay(1000).duration(500).attr("opacity", 1).text("-$3.7M");
              
-        g2026.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 80).attr("fill", "#1565c0").attr("opacity", 0)
-             .transition().delay(1200).duration(500).attr("opacity", 1)
-             .text("$5.0M Tax Levy carries over.")
-             .append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("No loans to repay.")
-             .append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("Need $3.7M ADDITIONAL cuts.");
+        // SAFELY BUILDING THE 'YES' TEXT BEFORE ANIMATING
+        const annYes = g2026.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 80).attr("fill", "#1565c0").attr("opacity", 0);
+        annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).text("$5.0M Tax Levy carries over.");
+        annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("No loans to repay.");
+        annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("Need $3.7M ADDITIONAL cuts.");
+        annYes.transition().delay(1200).duration(500).attr("opacity", 1);
+
 
         // Vertical Divider
         svg.append("line").attr("x1", innerWidth/2).attr("x2", innerWidth/2).attr("y1", -90).attr("y2", innerHeight + 20).attr("stroke", "#ccc").attr("stroke-dasharray", "4,4");
