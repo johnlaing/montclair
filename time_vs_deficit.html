@@ -15,7 +15,7 @@
         /* Legend */
         .legend-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .legend-item { display: flex; align-items: center; font-weight: bold; font-size: 15px; }
-        .box-no { width: 20px; height: 20px; background: #e74c3c; margin-right: 10px; border-radius: 4px; }
+        .box-no { width: 20px; height: 20px; background: #518c6b; margin-right: 10px; border-radius: 4px; }
         .box-yes { width: 20px; height: 20px; background: #2980b9; margin-right: 10px; border-radius: 4px; }
 
         /* Chart Text */
@@ -97,7 +97,7 @@
         const g2025 = svg.append("g").attr("transform", `translate(${x0("Year 1: 2025-26")},0)`);
         
         // No Bar 2025
-        g2025.append("rect").attr("x", x1("no")).attr("y", zeroY - 4).attr("width", x1.bandwidth()).attr("height", 4).attr("fill", "#e74c3c").attr("rx", 2);
+        g2025.append("rect").attr("x", x1("no")).attr("y", zeroY - 4).attr("width", x1.bandwidth()).attr("height", 4).attr("fill", "#518c6b").attr("rx", 2);
         g2025.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 15).attr("fill", "#c0392b").text("$0");
         g2025.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 60).text("Balanced with").append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("$5.0M Advance Aid");
 
@@ -112,7 +112,7 @@
 
         // No Bar 2026 (-10M Gap)
         const gapNo = -10; 
-        g2026.append("rect").attr("x", x1("no")).attr("y", zeroY).attr("width", x1.bandwidth()).attr("height", 0).attr("fill", "#e74c3c").attr("rx", 4)
+        g2026.append("rect").attr("x", x1("no")).attr("y", zeroY).attr("width", x1.bandwidth()).attr("height", 0).attr("fill", "#518c6b").attr("rx", 4)
              .transition().duration(1500).ease(d3.easeCubicOut).attr("height", y(gapNo) - zeroY);
         
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", y(gapNo) + 30).attr("fill", "#fff").attr("opacity", 0)
