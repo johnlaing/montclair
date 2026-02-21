@@ -7,7 +7,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdfdfd; padding: 20px; color: #333; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 850px; margin: 0 auto; }
         .chart-box { border: 1px solid #eee; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: #fff; }
         .controls { text-align: center; margin-bottom: 25px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
         .toggle-btn { padding: 12px 30px; cursor: pointer; border: 2px solid #2c3e50; background: #fff; color: #2c3e50; font-weight: bold; font-size: 16px; border-radius: 8px; transition: 0.3s; margin: 0 10px; }
@@ -16,18 +16,19 @@
         h1 { text-align: center; margin-bottom: 5px; font-size: 28px; color: #2c3e50; }
         p.subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 16px; }
         
-        /* D3 Chart Text Styling */
-        .bar-label { font-size: 16px; font-weight: bold; fill: #333; text-anchor: middle; }
-        .bar-title { font-size: 12px; font-weight: bold; fill: white; text-anchor: middle; }
-        .axis-text { font-size: 13px; font-weight: bold; fill: #555; }
-        .sub-text { font-size: 11px; fill: #c0392b; font-weight: bold; }
+        /* Text Styling */
+        .bar-amount { font-size: 18px; font-weight: bold; text-anchor: middle; }
+        .bar-title { font-size: 14px; font-weight: bold; text-anchor: middle; }
+        .axis-text { font-size: 14px; font-weight: bold; fill: #333; }
+        .zero-label { font-size: 12px; font-weight: bold; fill: #666; }
+        .cut-text { font-size: 12px; fill: #c0392b; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Understanding the Funding Gap</h1>
-        <p class="subtitle">Focusing solely on the deficit and how Question 2 solves it.</p>
+        <p class="subtitle">Deficits fall below the line. Revenue fixes rise above it.</p>
 
         <div class="controls">
             <span style="font-weight: bold; margin-right: 15px; font-size: 16px;">Test the scenarios:</span>
@@ -41,57 +42,51 @@
     </div>
 
     <script>
-        // Setup Dimensions
-        const width = 740, height = 450;
-        const margin = { top: 40, right: 20, bottom: 80, left: 60 };
+        const width = 790, height = 480;
+        const margin = { top: 60, right: 30, bottom: 80, left: 60 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
 
-        // Create SVG
         const svg = d3.select("#dataviz").append("svg")
             .attr("width", width)
             .attr("height", height)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // X and Y Scales (Y goes from 0 to 12M now to focus JUST on the gap)
-        const x = d3.scaleBand().domain(["1. The Starting Problem", "2. The 2025 Fix", "3. The 2026 Result"]).range([0, innerWidth]).padding(0.3);
-        const y = d3.scaleLinear().domain([0, 12]).range([innerHeight, 0]);
+        // Y-Axis ranges from -12M (Deficit) to +6M (Surplus/Fix)
+        const y = d3.scaleLinear().domain([-12, 6]).range([innerHeight, 0]);
+        const x = d3.scaleBand().domain(["1. 2025 Starting Problem", "2. The 2025 Fix", "3. 2026 Resulting Gap"]).range([0, innerWidth]).padding(0.3);
 
         // Add Y Axis
-        svg.append("g").call(d3.axisLeft(y).ticks(6).tickFormat(d => "$" + d + "M")).style("font-size", "12px");
+        svg.append("g").call(d3.axisLeft(y).ticks(8).tickFormat(d => (d < 0 ? "-$" + Math.abs(d) : "$" + d) + "M")).style("font-size", "12px");
 
-        // Add X Axis (Custom labels)
-        svg.append("g")
-           .attr("transform", `translate(0,${innerHeight})`)
-           .call(d3.axisBottom(x).tickSize(0))
-           .selectAll("text")
-           .attr("class", "axis-text")
-           .attr("dy", "1.5em");
+        // The "ZERO" Line (Balanced Budget)
+        const zeroY = y(0);
+        svg.append("line").attr("x1", 0).attr("x2", innerWidth).attr("y1", zeroY).attr("y2", zeroY).attr("stroke", "#333").attr("stroke-width", 2);
+        svg.append("text").attr("class", "zero-label").attr("x", innerWidth - 5).attr("y", zeroY - 8).attr("text-anchor", "end").text("Balanced Budget ($0)");
 
-        // Add fixed sub-text under the X-axis for the Cuts
-        svg.append("text").attr("class", "sub-text").attr("x", x("1. The Starting Problem") + x.bandwidth()/2).attr("y", innerHeight + 50).attr("text-anchor", "middle").text("Requires $2.8M Mid-year Cuts");
-        svg.append("text").attr("class", "sub-text").attr("x", x("2. The 2025 Fix") + x.bandwidth()/2).attr("y", innerHeight + 50).attr("text-anchor", "middle").text(""); // Empty middle
-        svg.append("text").attr("class", "sub-text").attr("x", x("3. The 2026 Result") + x.bandwidth()/2).attr("y", innerHeight + 50).attr("text-anchor", "middle").text("Requires $3.5M Annualized Cuts");
+        // Custom X-Axis Labels (Anchored manually to stay at the zero line visually)
+        const categories = ["1. 2025 Starting Problem", "2. The 2025 Fix", "3. 2026 Resulting Gap"];
+        categories.forEach(cat => {
+            svg.append("text").attr("class", "axis-text").attr("x", x(cat) + x.bandwidth()/2).attr("y", innerHeight + 30).attr("text-anchor", "middle").text(cat);
+        });
 
+        // Fixed Subtext for Mid-Year Cuts
+        svg.append("text").attr("class", "cut-text").attr("x", x("1. 2025 Starting Problem") + x.bandwidth()/2).attr("y", innerHeight + 50).attr("text-anchor", "middle").text("Requires $2.8M Mid-year Cuts");
+        svg.append("text").attr("class", "cut-text").attr("x", x("3. 2026 Resulting Gap") + x.bandwidth()/2).attr("y", innerHeight + 50).attr("text-anchor", "middle").text("Requires $3.5M Annualized Cuts");
 
-        // --- DRAW THE BARS ---
+        // --- 1. STATIC BAR: 2025 GAP (Red, dropping down from 0 to -5) ---
+        svg.append("rect").attr("x", x("1. 2025 Starting Problem")).attr("y", zeroY).attr("width", x.bandwidth()).attr("height", y(-5) - zeroY).attr("fill", "#e74c3c").attr("rx", 4);
+        svg.append("text").attr("class", "bar-amount").attr("x", x("1. 2025 Starting Problem") + x.bandwidth()/2).attr("y", y(-5) + 25).attr("fill", "#c0392b").text("-$5.0M");
 
-        // 1. The Starting Problem (Always $5.0M Red)
-        svg.append("rect").attr("x", x("1. The Starting Problem")).attr("y", y(5)).attr("width", x.bandwidth()).attr("height", innerHeight - y(5)).attr("fill", "#e74c3c");
-        svg.append("text").attr("class", "bar-title").attr("x", x("1. The Starting Problem") + x.bandwidth()/2).attr("y", y(5) + 20).text("Initial Gap");
-        svg.append("text").attr("class", "bar-label").attr("x", x("1. The Starting Problem") + x.bandwidth()/2).attr("y", y(5) - 10).text("$5.0M");
-
-        // 2. The 2025 Fix (Dynamic)
-        const fixBar = svg.append("rect").attr("x", x("2. The 2025 Fix")).attr("width", x.bandwidth());
+        // --- 2. DYNAMIC BAR: THE FIX (Rising up from 0) ---
+        const fixBar = svg.append("rect").attr("x", x("2. The 2025 Fix")).attr("width", x.bandwidth()).attr("rx", 4);
+        const fixAmount = svg.append("text").attr("class", "bar-amount").attr("x", x("2. The 2025 Fix") + x.bandwidth()/2);
         const fixTitle = svg.append("text").attr("class", "bar-title").attr("x", x("2. The 2025 Fix") + x.bandwidth()/2);
-        const fixLabel = svg.append("text").attr("class", "bar-label").attr("x", x("2. The 2025 Fix") + x.bandwidth()/2);
 
-        // 3. The 2026 Result (Dynamic)
-        const resultBar = svg.append("rect").attr("x", x("3. The 2026 Result")).attr("width", x.bandwidth());
-        const resultTitle = svg.append("text").attr("class", "bar-title").attr("x", x("3. The 2026 Result") + x.bandwidth()/2);
-        const resultLabel = svg.append("text").attr("class", "bar-label").attr("x", x("3. The 2026 Result") + x.bandwidth()/2);
-
+        // --- 3. DYNAMIC BAR: 2026 RESULT (Dropping down from 0) ---
+        const resultBar = svg.append("rect").attr("x", x("3. 2026 Resulting Gap")).attr("width", x.bandwidth()).attr("rx", 4);
+        const resultAmount = svg.append("text").attr("class", "bar-amount").attr("x", x("3. 2026 Resulting Gap") + x.bandwidth()/2).attr("fill", "#c0392b");
 
         // --- ANIMATION CONTROLLER ---
         function updateChart(state) {
@@ -101,26 +96,24 @@
             const t = d3.transition().duration(750).ease(d3.easeCubicInOut);
 
             if (state === 'no') {
-                // Fix Bar: State Loan
-                fixBar.transition(t).attr("y", y(5)).attr("height", innerHeight - y(5)).attr("fill", "#f39c12");
-                fixTitle.transition(t).attr("y", y(5) + 20).text("State Loan");
-                fixLabel.transition(t).attr("y", y(5) - 10).text("+$5.0M");
+                // Fix Bar: State Loan (+5M, upwards)
+                fixBar.transition(t).attr("y", y(5)).attr("height", zeroY - y(5)).attr("fill", "#f39c12");
+                fixAmount.transition(t).attr("y", y(5) - 25).attr("fill", "#d35400").text("+$5.0M");
+                fixTitle.transition(t).attr("y", y(5) - 8).attr("fill", "#d35400").text("State Loan");
 
-                // Result Bar: Massive $10M Gap
-                resultBar.transition(t).attr("y", y(10)).attr("height", innerHeight - y(10)).attr("fill", "#c0392b");
-                resultTitle.transition(t).attr("y", y(10) + 20).text("Compounded Gap");
-                resultLabel.transition(t).attr("y", y(10) - 10).text("$10.0M").attr("fill", "#c0392b"); // Make text red to emphasize bad
+                // Result Bar: Massive $10M Gap (-10M, downwards)
+                resultBar.transition(t).attr("y", zeroY).attr("height", y(-10) - zeroY).attr("fill", "#c0392b");
+                resultAmount.transition(t).attr("y", y(-10) + 25).text("-$10.0M");
 
             } else if (state === 'yes') {
-                // Fix Bar: Tax Levy
-                fixBar.transition(t).attr("y", y(5)).attr("height", innerHeight - y(5)).attr("fill", "#2980b9");
-                fixTitle.transition(t).attr("y", y(5) + 20).text("Tax Levy");
-                fixLabel.transition(t).attr("y", y(5) - 10).text("+$5.0M");
+                // Fix Bar: Tax Levy (+5M, upwards)
+                fixBar.transition(t).attr("y", y(5)).attr("height", zeroY - y(5)).attr("fill", "#2980b9");
+                fixAmount.transition(t).attr("y", y(5) - 25).attr("fill", "#1565c0").text("+$5.0M");
+                fixTitle.transition(t).attr("y", y(5) - 8).attr("fill", "#1565c0").text("Tax Levy");
 
-                // Result Bar: Shrunk $3.7M Gap
-                resultBar.transition(t).attr("y", y(3.7)).attr("height", innerHeight - y(3.7)).attr("fill", "#e74c3c");
-                resultTitle.transition(t).attr("y", y(3.7) + 20).text("Remaining Gap");
-                resultLabel.transition(t).attr("y", y(3.7) - 10).text("$3.7M").attr("fill", "#333");
+                // Result Bar: Shrunk $3.7M Gap (-3.7M, downwards)
+                resultBar.transition(t).attr("y", zeroY).attr("height", y(-3.7) - zeroY).attr("fill", "#e74c3c");
+                resultAmount.transition(t).attr("y", y(-3.7) + 25).text("-$3.7M");
             }
         }
 
