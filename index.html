@@ -6,17 +6,20 @@
     <title>Montclair Referendum Impact</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; padding: 20px; color: #333; line-height: 1.6; }
-        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
-        .chart-box { border: 1px solid #eee; padding: 20px; width: 520px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); background: #fff; }
-        .controls { text-align: center; margin-bottom: 30px; }
-        .toggle-btn { padding: 12px 24px; cursor: pointer; border: 1px solid #333; background: #f9f9f9; font-weight: bold; font-size: 16px; border-radius: 4px; transition: 0.2s; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdfdfd; padding: 20px; color: #333; line-height: 1.6; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1250px; margin: 0 auto; }
+        .chart-box { border: 1px solid #eee; padding: 15px; width: 380px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background: #fff; }
+        .controls { text-align: center; margin-bottom: 25px; }
+        .toggle-btn { padding: 12px 30px; cursor: pointer; border: 2px solid #333; background: #fff; color: #333; font-weight: bold; font-size: 16px; border-radius: 8px; transition: 0.2s; margin: 0 5px; }
         .active { background: #333; color: white; }
-        h1 { text-align: center; margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; }
-        .unit-note { font-size: 12px; color: #888; text-align: right; margin-bottom: 5px; }
-        .key-terms { max-width: 1070px; margin: 40px auto; padding: 20px; background: #fdfdfd; border-left: 5px solid #333; border-radius: 4px; }
-        .term-item { margin-bottom: 15px; }
+        h1 { text-align: center; margin-bottom: 5px; font-size: 28px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 16px; }
+        .unit-note { font-size: 11px; color: #888; text-align: right; margin-bottom: 10px; font-style: italic; }
+        .chart-title { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #2c3e50; }
+        
+        /* Key Terms Styling */
+        .key-terms { max-width: 1210px; margin: 40px auto; padding: 25px; background: #fff; border-left: 5px solid #2c3e50; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .term-item { margin-bottom: 12px; font-size: 14px; }
         .term-title { font-weight: bold; color: #2c3e50; }
         .tag-no { color: #d68910; font-weight: bold; }
         .tag-yes { color: #2980b9; font-weight: bold; }
@@ -25,128 +28,166 @@
 <body>
 
     <h1>Montclair School Budget Impact</h1>
-    <p class="subtitle">Visualizing the 2025-26 Referendum Question 2</p>
+    <p class="subtitle">Visualizing the 2025-26 Referendum Question 2 and Future Projections</p>
 
     <div class="controls">
-        <button id="no-btn" class="toggle-btn active" onclick="update(false)">No on Q2</button>
-        <button id="yes-btn" class="toggle-btn" onclick="update(true)">Yes on Q2</button>
+        <button id="no-btn" class="toggle-btn active" onclick="update(false)">Vote NO on Q2</button>
+        <button id="yes-btn" class="toggle-btn" onclick="update(true)">Vote YES on Q2</button>
     </div>
 
     <div class="container">
         <div class="chart-box">
-            <div style="text-align:center; font-weight:bold; margin-bottom:10px;">Current State (Before Q2)</div>
+            <div class="chart-title">Current State (2025-26 Before Q2)</div>
             <div class="unit-note">All figures in Millions (M)</div>
             <div id="as-is"></div>
         </div>
 
         <div class="chart-box">
-            <div id="dynamic-title" style="text-align:center; font-weight:bold; margin-bottom:10px;">Scenario: No on Q2</div>
+            <div id="title-25" class="chart-title">2025-26 Scenario: No on Q2</div>
             <div class="unit-note">All figures in Millions (M)</div>
-            <div id="comparison"></div>
+            <div id="chart-25"></div>
+        </div>
+
+        <div class="chart-box">
+            <div id="title-26" class="chart-title">2026-27 Scenario: No on Q2</div>
+            <div class="unit-note">All figures in Millions (M)</div>
+            <div id="chart-26"></div>
         </div>
     </div>
 
     <div class="key-terms">
-        <h3>Key Terms & Context</h3>
-        <div class="term-item">
-            <span class="term-title">Funding Gap ($5M):</span> The difference between projected expenditures ($159.2M) and expected revenue ($154.2M).
-        </div>
-        <div class="term-item">
-            <span class="tag-no">Advance of State Aid (Vote No):</span> A loan from the State. It covers the $5M gap now but must be repaid with interest, potentially impacting future budgets.
-        </div>
-        <div class="term-item">
-            <span class="tag-yes">Tax Levy (Vote Yes):</span> A permanent increase in local tax revenue to cover the $5M gap directly, avoiding loans and interest.
-        </div>
-        <div class="term-item">
-            <span class="term-title">Mid-year Cuts ($2.8M):</span> Reductions required to balance the budget if existing revenue doesn't meet costs.
-        </div>
+        <h3 style="margin-top:0;">Key Terms & Context</h3>
+        <div class="term-item"><span class="term-title">Funding Gap:</span> The difference between projected expenditures and expected revenue.</div>
+        <div class="term-item"><span class="tag-no">Advance of State Aid (Vote No):</span> A loan from the State covering the immediate gap, but must be repaid with interest.</div>
+        <div class="term-item"><span class="tag-yes">Tax Levy (Vote Yes):</span> A permanent increase in local tax revenue to cover the gap directly, avoiding loans.</div>
+        <div class="term-item"><span class="term-title">Mid-year Cuts:</span> Reductions required to balance the budget if existing revenue doesn't meet costs.</div>
+        <div class="term-item"><span class="term-title">2026-27 Projections:</span> Shows the compounded effect in the following year, including potential losses in state aid and annualized mid-year cuts.</div>
     </div>
 
     <script>
-        const data = { rev: 154.2, exp: 159.2, gap: 5.0, cuts: 2.8 };
-        const w = 520, h = 400, margin = {top: 50, right: 100, bottom: 40, left: 60};
+        const w = 380, h = 400, margin = {top: 50, right: 60, bottom: 40, left: 50};
         
+        // Setup Scales
         const x = d3.scaleBand().domain(["Revenue", "Expenditure"]).range([margin.left, w - margin.right]).padding(0.4);
         const y = d3.scaleLinear().domain([140, 175]).range([h - margin.bottom, margin.top]);
 
-        let svgLeft, svgRight;
+        let svgLeft, svg25, svg26;
+
+        // Helper function for centered text inside bars
+        function addText(group, cx, cy, line1, line2, color, size) {
+            const txt = group.append("text").attr("x", cx).attr("y", cy).attr("text-anchor", "middle").attr("fill", color).style("font-size", size).style("font-weight", "bold");
+            txt.append("tspan").attr("x", cx).text(line1);
+            if(line2) txt.append("tspan").attr("x", cx).attr("dy", "1.3em").text(line2);
+        }
+
+        // Helper function for the Gap arrows
+        function drawArrow(group, xPos, y1, y2, label1, label2) {
+            group.append("line").attr("x1", xPos).attr("y1", y1).attr("x2", xPos).attr("y2", y2)
+                 .attr("stroke", "#ed7d31").attr("stroke-width", 2).attr("marker-start", "url(#arrow)").attr("marker-end", "url(#arrow)");
+            
+            // Text anchored left so it writes away from the bar
+            const txt = group.append("text").attr("x", xPos + 6).attr("y", (y1 + y2)/2 - 5)
+                             .attr("fill", "#ed7d31").style("font-weight", "bold").style("font-size", "11px").attr("text-anchor", "start");
+            txt.append("tspan").attr("x", xPos + 6).text(label1);
+            if(label2) txt.append("tspan").attr("x", xPos + 6).attr("dy", "1.2em").text(label2);
+        }
 
         function init() {
             svgLeft = d3.select("#as-is").append("svg").attr("width", w).attr("height", h);
-            svgRight = d3.select("#comparison").append("svg").attr("width", w).attr("height", h);
+            svg25 = d3.select("#chart-25").append("svg").attr("width", w).attr("height", h);
+            svg26 = d3.select("#chart-26").append("svg").attr("width", w).attr("height", h);
 
-            [svgLeft, svgRight].forEach(svg => {
-                svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6).tickFormat(d => "$" + d + "M"));
+            [svgLeft, svg25, svg26].forEach(svg => {
+                svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(8).tickFormat(d => "$" + d + "M"));
                 svg.append("g").attr("transform", `translate(0,${h - margin.bottom})`).call(d3.axisBottom(x));
                 
                 svg.append("defs").append("marker")
                     .attr("id", "arrow").attr("viewBox", "0 0 10 10").attr("refX", 5).attr("refY", 5)
-                    .attr("markerWidth", 4).attr("markerHeight", 4).attr("orient", "auto")
+                    .attr("markerWidth", 5).attr("markerHeight", 5).attr("orient", "auto")
                     .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("fill", "#ed7d31");
             });
 
             renderStatic();
-            update(false);
+            update(false); // Start on NO
         }
 
         function renderStatic() {
-            // Main Revenue Bar
-            svgLeft.append("rect").attr("x", x("Revenue")).attr("y", y(data.rev)).attr("width", x.bandwidth()).attr("height", (h - margin.bottom) - y(data.rev)).attr("fill", "#4a71be");
-            
-            // Expenditure Bar (The solid base part)
-            const expBase = data.exp - data.cuts;
-            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(expBase)).attr("width", x.bandwidth()).attr("height", (h - margin.bottom) - y(expBase)).attr("fill", "#54ad66");
-            
-            // The Dashed Box on top (The cut amount)
-            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(data.exp)).attr("width", x.bandwidth()).attr("height", y(expBase) - y(data.exp)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
-            
-            // Revenue Label - using fixed string to avoid floating point math
-            svgLeft.append("text").attr("x", x("Revenue") + x.bandwidth()/2).attr("y", y(data.rev) + 15).attr("text-anchor", "middle").attr("fill", "white").style("font-size", "11px").text("$154.2M");
-            
-            // Expenditure Base Label
-            svgLeft.append("text").attr("x", x("Expenditure") + x.bandwidth()/2).attr("y", y(expBase) + 15).attr("text-anchor", "middle").attr("fill", "white").style("font-size", "11px").text("$156.4M");
+            // Rev Base
+            svgLeft.append("rect").attr("x", x("Revenue")).attr("y", y(154.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(154.2)).attr("fill", "#4a71be");
+            addText(svgLeft, x("Revenue") + x.bandwidth()/2, y(154.2) + 20, "$154.2M", null, "white", "12px");
 
-            // Dashed box text centered
-            const cutTxt = svgLeft.append("text").attr("x", x("Expenditure") + x.bandwidth()/2).attr("y", y(data.exp) + 14).attr("text-anchor", "middle").style("font-size", "9px").style("font-weight", "bold");
-            cutTxt.append("tspan").attr("x", x("Expenditure") + x.bandwidth()/2).text("Mid-year Cut");
-            cutTxt.append("tspan").attr("x", x("Expenditure") + x.bandwidth()/2).attr("dy", "1em").text("$2.8M");
+            // Exp Base (Visual height is 156.4, but labeled 159.2 per user request)
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(156.4)).attr("width", x.bandwidth()).attr("height", y(140) - y(156.4)).attr("fill", "#54ad66");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(156.4) + 20, "$159.2M", null, "white", "12px");
 
-            // Gap Arrow
-            const gapX = x("Revenue") + x.bandwidth() + 10;
-            svgLeft.append("line").attr("x1", gapX).attr("y1", y(data.rev)).attr("x2", gapX).attr("y2", y(data.exp)).attr("stroke", "#ed7d31").attr("stroke-width", 2).attr("marker-start", "url(#arrow)").attr("marker-end", "url(#arrow)");
-            svgLeft.append("text").attr("x", gapX + 8).attr("y", y((data.rev + data.exp)/2) + 5).attr("fill", "#ed7d31").style("font-weight", "bold").style("font-size", "12px").text("$5M Gap");
+            // Exp Dashed Box (2.8M)
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(156.4) - y(159.2)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(159.2) + 12, "Mid-year Cut", "$2.8M", "#333", "9px");
+
+            // Arrow
+            drawArrow(svgLeft, x("Revenue") + x.bandwidth() + 8, y(154.2), y(159.2), "$5.0M", "Gap");
         }
 
         function update(isYes) {
             d3.select("#no-btn").classed("active", !isYes);
             d3.select("#yes-btn").classed("active", isYes);
-            d3.select("#dynamic-title").text(`Scenario: ${isYes ? 'Yes' : 'No'} on Q2`);
+            d3.select("#title-25").text(`2025-26 Scenario: ${isYes ? 'Yes' : 'No'} on Q2`);
+            d3.select("#title-26").text(`2026-27 Scenario: ${isYes ? 'Yes' : 'No'} on Q2`);
             
-            svgRight.selectAll(".dynamic-content").remove();
-            const group = svgRight.append("g").attr("class", "dynamic-content");
+            svg25.selectAll(".dynamic-content").remove();
+            svg26.selectAll(".dynamic-content").remove();
+            
+            const g25 = svg25.append("g").attr("class", "dynamic-content");
+            const g26 = svg26.append("g").attr("class", "dynamic-content");
 
-            // Revenue Base
-            group.append("rect").attr("x", x("Revenue")).attr("y", y(data.rev)).attr("width", x.bandwidth()).attr("height", (h - margin.bottom) - y(data.rev)).attr("fill", "#4a71be");
+            // ==========================================
+            // CHART 2: 2025-26 (Toggle logic)
+            // ==========================================
+            g25.append("rect").attr("x", x("Revenue")).attr("y", y(154.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(154.2)).attr("fill", "#4a71be");
+            addText(g25, x("Revenue") + x.bandwidth()/2, y(154.2) + 20, "$154.2M", null, "white", "12px");
             
-            // The Scenario Box ($5M Top off)
-            const scenarioY = y(data.rev + 5);
-            group.append("rect").attr("x", x("Revenue")).attr("y", scenarioY).attr("width", x.bandwidth()).attr("height", y(data.rev) - scenarioY).attr("fill", isYes ? "#5bace3" : "#ffc000");
-            
-            // Centered Scenario Label
-            const scenarioLabel = group.append("text").attr("x", x("Revenue") + x.bandwidth()/2).attr("y", scenarioY + 12).attr("text-anchor", "middle").style("font-size", "10px").style("font-weight", "bold");
-            scenarioLabel.append("tspan").attr("x", x("Revenue") + x.bandwidth()/2).text(isYes ? "Tax Levy" : "Advance Aid");
-            scenarioLabel.append("tspan").attr("x", x("Revenue") + x.bandwidth()/2).attr("dy", "1.1em").text("$5M");
+            g25.append("rect").attr("x", x("Revenue")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(154.2) - y(159.2)).attr("fill", isYes ? "#5bace3" : "#ffc000");
+            addText(g25, x("Revenue") + x.bandwidth()/2, y(159.2) + 14, isYes ? "Tax Levy" : "Advance Aid", "$5.0M", "#333", "9px");
 
-            // Expenditure Base
-            const expBase = data.exp - data.cuts;
-            group.append("rect").attr("x", x("Expenditure")).attr("y", y(expBase)).attr("width", x.bandwidth()).attr("height", (h - margin.bottom) - y(expBase)).attr("fill", "#54ad66");
-            
-            // Dashed box for Mid-year Cut
-            group.append("rect").attr("x", x("Expenditure")).attr("y", y(data.exp)).attr("width", x.bandwidth()).attr("height", y(expBase) - y(data.exp)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
-            
-            const cutLabel = group.append("text").attr("x", x("Expenditure") + x.bandwidth()/2).attr("y", y(data.exp) + 14).attr("text-anchor", "middle").style("font-size", "9px").style("font-weight", "bold");
-            cutLabel.append("tspan").attr("x", x("Expenditure") + x.bandwidth()/2).text("Mid-year Cut");
-            cutLabel.append("tspan").attr("x", x("Expenditure") + x.bandwidth()/2).attr("dy", "1.1em").text("$2.8M");
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(156.4)).attr("width", x.bandwidth()).attr("height", y(140) - y(156.4)).attr("fill", "#54ad66");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(156.4) + 20, "$159.2M", null, "white", "12px");
+
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(156.4) - y(159.2)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(159.2) + 12, "Mid-year Cut", "$2.8M", "#333", "9px");
+
+
+            // ==========================================
+            // CHART 3: 2026-27 (Toggle logic)
+            // ==========================================
+            if (!isYes) {
+                // NO on Q2 (2026-27)
+                g26.append("rect").attr("x", x("Revenue")).attr("y", y(153.3)).attr("width", x.bandwidth()).attr("height", y(140) - y(153.3)).attr("fill", "#4a71be");
+                addText(g26, x("Revenue") + x.bandwidth()/2, y(153.3) + 20, "$153.3M", null, "white", "12px");
+
+                g26.append("rect").attr("x", x("Revenue")).attr("y", y(155.15)).attr("width", x.bandwidth()).attr("height", y(153.3) - y(155.15)).attr("fill", "#e8eaf6").attr("stroke", "#333").attr("stroke-dasharray", "4");
+                addText(g26, x("Revenue") + x.bandwidth()/2, y(155.15) + 10, "Less State Aid", "$1.85M", "#333", "8.5px");
+
+                g26.append("rect").attr("x", x("Expenditure")).attr("y", y(163.9)).attr("width", x.bandwidth()).attr("height", y(140) - y(163.9)).attr("fill", "#54ad66");
+                addText(g26, x("Expenditure") + x.bandwidth()/2, y(163.9) + 20, "$163.9M", null, "white", "12px");
+
+                g26.append("rect").attr("x", x("Expenditure")).attr("y", y(167.4)).attr("width", x.bandwidth()).attr("height", y(163.9) - y(167.4)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+                addText(g26, x("Expenditure") + x.bandwidth()/2, y(167.4) + 11, "Mid Year Cut", "Annualized $3.5M", "#333", "8.5px");
+
+                drawArrow(g26, x("Revenue") + x.bandwidth() + 8, y(153.3), y(163.3), "$10.0M", "Cut Gap");
+
+            } else {
+                // YES on Q2 (2026-27)
+                g26.append("rect").attr("x", x("Revenue")).attr("y", y(160.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(160.2)).attr("fill", "#4a71be");
+                addText(g26, x("Revenue") + x.bandwidth()/2, y(160.2) + 20, "$160.2M", null, "white", "12px");
+
+                g26.append("rect").attr("x", x("Expenditure")).attr("y", y(163.9)).attr("width", x.bandwidth()).attr("height", y(140) - y(163.9)).attr("fill", "#54ad66");
+                addText(g26, x("Expenditure") + x.bandwidth()/2, y(163.9) + 20, "$163.9M", null, "white", "12px");
+
+                g26.append("rect").attr("x", x("Expenditure")).attr("y", y(167.4)).attr("width", x.bandwidth()).attr("height", y(163.9) - y(167.4)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+                addText(g26, x("Expenditure") + x.bandwidth()/2, y(167.4) + 11, "Mid Year Cut", "Annualized $3.5M", "#333", "8.5px");
+
+                drawArrow(g26, x("Revenue") + x.bandwidth() + 8, y(160.2), y(163.9), "$3.7M", "Cut Gap");
+            }
         }
 
         window.onload = init;
