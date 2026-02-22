@@ -8,8 +8,11 @@
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdfdfd; padding: 20px; color: #333; line-height: 1.6; }
         /* Adjusted max-width to 850px to force a perfect 2x2 grid for the 4 charts */
-        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 850px; margin: 0 auto; }
-        .chart-box { border: 1px solid #eee; padding: 15px; width: 380px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background: #fff; }
+        /* Bumped max-width to 950px so the wider boxes stay side-by-side */
+        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 950px; margin: 0 auto; }
+        
+        /* Matched the box width to the new 420px chart width */
+        .chart-box { border: 1px solid #eee; padding: 15px; width: 420px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background: #fff; }
         .controls { text-align: center; margin-bottom: 25px; }
         .toggle-btn { padding: 12px 30px; cursor: pointer; border: 2px solid #333; background: #fff; color: #333; font-weight: bold; font-size: 16px; border-radius: 8px; transition: 0.2s; margin: 0 5px; }
         .active { background: #333; color: white; }
