@@ -133,7 +133,7 @@
             addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(162.0) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
 
             // Fixed Arrow: Stops cleanly at 159.2 base
-            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(159.2), "$5.0M", "Gap");
+            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(159.2), "$5M", "Cuts Needed");
 
             // --- 2. Current State (2026-27 As is) ---
             svg26AsIs.append("rect").attr("x", x("Revenue")).attr("y", y(155.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(155.2)).attr("fill", "#4a71be");
@@ -146,7 +146,7 @@
             addText(svg26AsIs, x("Expenditure") + x.bandwidth()/2, y(167.4) + 14, "Mid Year Cuts", "Annualized $3.5M", "#333", "9px");
 
             // Arrow: Stops cleanly at 163.9 base
-            drawArrow(svg26AsIs, x("Revenue") + x.bandwidth(), y(155.2), y(163.9), "$8.7M", "Gap");
+            drawArrow(svg26AsIs, x("Revenue") + x.bandwidth(), y(155.2), y(163.9), "$8.7M", "Cuts Needed");
         }
 
         function update(isYes) {
@@ -191,7 +191,7 @@
                 g26.append("rect").attr("x", x("Expenditure")).attr("y", y(167.4)).attr("width", x.bandwidth()).attr("height", y(163.9) - y(167.4)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
                 addText(g26, x("Expenditure") + x.bandwidth()/2, y(167.4) + 14, "Mid Year Cut", "Annualized $3.5M", "#333", "9px");
 
-                drawArrow(g26, x("Revenue") + x.bandwidth(), y(153.3), y(163.9), "$10.0M", "Gap");
+                drawArrow(g26, x("Revenue") + x.bandwidth(), y(153.3), y(163.9), "$10M", "Cuts Needed");
 
             } else {
                 g26.append("rect").attr("x", x("Revenue")).attr("y", y(160.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(160.2)).attr("fill", "#4a71be");
@@ -203,7 +203,7 @@
                 g26.append("rect").attr("x", x("Expenditure")).attr("y", y(167.4)).attr("width", x.bandwidth()).attr("height", y(163.9) - y(167.4)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
                 addText(g26, x("Expenditure") + x.bandwidth()/2, y(167.4) + 14, "Mid Year Cut", "Annualized $3.5M", "#333", "9px");
 
-                drawArrow(g26, x("Revenue") + x.bandwidth(), y(160.2), y(163.9), "$3.7M", "Gap");
+                drawArrow(g26, x("Revenue") + x.bandwidth(), y(160.2), y(163.9), "$3.7M", "Cuts Needed");
             }
         }
 
