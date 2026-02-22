@@ -102,11 +102,13 @@
             if(label3) txt.append("tspan").attr("x", arrowX + 6).attr("dy", "1.3em").text(label3);
         }
 
+
         function init() {
-            svgLeft = d3.select("#as-is").append("svg").attr("width", w).attr("height", h);
-            svg25 = d3.select("#chart-25").append("svg").attr("width", w).attr("height", h);
-            svg26AsIs = d3.select("#chart-26-asis").append("svg").attr("width", w).attr("height", h);
-            svg26 = d3.select("#chart-26").append("svg").attr("width", w).attr("height", h);
+            // Makes all 4 charts perfectly responsive for mobile screens
+            svgLeft = d3.select("#as-is").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg25 = d3.select("#chart-25").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg26AsIs = d3.select("#chart-26-asis").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg26 = d3.select("#chart-26").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
 
             [svgLeft, svg25, svg26AsIs, svg26].forEach(svg => {
                 svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(8).tickFormat(d => "$" + d + "M"));
