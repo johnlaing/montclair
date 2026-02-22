@@ -136,6 +136,22 @@
         
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", y(gapNo) + 30).attr("fill", "#fff").attr("opacity", 0)
              .transition().delay(1000).duration(500).attr("opacity", 1).text("-$10.0M");
+        // ADDED: Text strictly inside the NO bar
+        const insideNo = g2026.append("text")
+             .attr("x", x1("no") + x1.bandwidth()/2)
+             .attr("y", zeroY + 25)
+             .attr("fill", "#fff")
+             .attr("text-anchor", "middle")
+             .style("font-size", "13px")
+             .style("font-weight", "bold")
+             .attr("opacity", 0);
+             
+        insideNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).text("Expected");
+        insideNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("No Vote");
+        insideNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("Outcome");
+        
+        // Animates in after the bar drops
+        insideNo.transition().delay(1200).duration(500).attr("opacity", 1);
              
         // SAFELY BUILDING THE 'NO' TEXT (Fixed Typo & simplified text)
         const annNo = g2026.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 95).attr("fill", "#db7d2a").attr("opacity", 0);
@@ -152,7 +168,23 @@
              
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", y(gapYes) + 30).attr("fill", "#fff").attr("opacity", 0)
              .transition().delay(1000).duration(500).attr("opacity", 1).text("-$3.7M");
+
+        // ADDED: Text strictly inside the YES bar
+        const insideYes = g2026.append("text")
+             .attr("x", x1("yes") + x1.bandwidth()/2)
+             .attr("y", zeroY + 25)
+             .attr("fill", "#fff")
+             .attr("text-anchor", "middle")
+             .style("font-size", "13px")
+             .style("font-weight", "bold")
+             .attr("opacity", 0);
              
+        insideYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).text("Expected");
+        insideYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("Yes Vote");
+        insideYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("Outcome");
+        
+        // Animates in after the bar drops
+        insideYes.transition().delay(1200).duration(500).attr("opacity", 1);
         // SAFELY BUILDING THE 'YES' TEXT (Moved higher up and stacked tightly)
         const annYes = g2026.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 95).attr("fill", "#1565c0").attr("opacity", 0);
         annYes.append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).text("Tax Levy carries over.");
