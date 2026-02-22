@@ -15,7 +15,7 @@
         /* Legend */
         .legend-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .legend-item { display: flex; align-items: center; font-weight: bold; font-size: 15px; }
-        .box-no { width: 20px; height: 20px; background: #518c6b; margin-right: 10px; border-radius: 4px; }
+        .box-no { width: 20px; height: 20px; background: #c0392b; margin-right: 10px; border-radius: 4px; }
         .box-yes { width: 20px; height: 20px; background: #2980b9; margin-right: 10px; border-radius: 4px; }
 
         /* Chart Text */
@@ -105,35 +105,36 @@
         const g2025 = svg.append("g").attr("transform", `translate(${x0("Year 1: 2025-26")},0)`);
         
         // No Bar 2025
-        g2025.append("rect").attr("x", x1("no")).attr("y", zeroY - 4).attr("width", x1.bandwidth()).attr("height", 4).attr("fill", "#518c6b").attr("rx", 2);
-        g2025.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 15).attr("fill", "#518c6b").text("$0");
+        // No Bar 2025 (Changed color to #c0392b)
+        g2025.append("rect").attr("x", x1("no")).attr("y", zeroY - 4).attr("width", x1.bandwidth()).attr("height", 4).attr("fill", "#c0392b").attr("rx", 2);
+        g2025.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 15).attr("fill", "#c0392b").text("$0");
         g2025.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 60).text("Balanced with").append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").text("$5.0M Advance Aid");
-
         // Yes Bar 2025
         g2025.append("rect").attr("x", x1("yes")).attr("y", zeroY - 4).attr("width", x1.bandwidth()).attr("height", 4).attr("fill", "#2980b9").attr("rx", 2);
         g2025.append("text").attr("class", "bar-amount").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 15).attr("fill", "#1565c0").text("$0");
-        g2025.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 60).text("Balanced with").append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("$5.0M Tax Levy");
+        g2025.append("text").attr("class", "annotation").attr("x", x1("yes") + x1.bandwidth()/2).attr("y", zeroY - 60).text("Balanced with").append("tspan").attr("x", x1("yes") + x1.bandwidth()/2).attr("dy", "1.2em").text("$5M Tax Levy");
 
 
         // YEAR 2: 2026-27 
         const g2026 = svg.append("g").attr("transform", `translate(${x0("Year 2: 2026-27")},0)`);
 
         // No Bar 2026 (-10M Gap)
+
+        // No Bar 2026 (-10M Gap) (Changed color to #c0392b)
         const gapNo = -10; 
-        g2026.append("rect").attr("x", x1("no")).attr("y", zeroY).attr("width", x1.bandwidth()).attr("height", 0).attr("fill", "#518c6b").attr("rx", 4)
+        g2026.append("rect").attr("x", x1("no")).attr("y", zeroY).attr("width", x1.bandwidth()).attr("height", 0).attr("fill", "#c0392b").attr("rx", 4)
              .transition().duration(1500).ease(d3.easeCubicOut).attr("height", y(gapNo) - zeroY);
         
         g2026.append("text").attr("class", "bar-amount").attr("x", x1("no") + x1.bandwidth()/2).attr("y", y(gapNo) + 30).attr("fill", "#fff").attr("opacity", 0)
              .transition().delay(1000).duration(500).attr("opacity", 1).text("-$10.0M");
              
-        // SAFELY BUILDING THE 'NO' TEXT (Moved higher up and stacked tightly)
+        // SAFELY BUILDING THE 'NO' TEXT (Fixed Typo & simplified text)
         const annNo = g2026.append("text").attr("class", "annotation").attr("x", x1("no") + x1.bandwidth()/2).attr("y", zeroY - 95).attr("fill", "#c0392b").attr("opacity", 0);
-        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).text("1.85M Less State Aid");
-        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").text("due to advance 25/26 advance.");
-        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").attr("class", "alert-text").text("Need $10M");
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).text("Loses $1.85M in State Aid");
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").text("due to Year 1 loan.");
+        annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.3em").attr("class", "alert-text").text("Need $10.0M");
         annNo.append("tspan").attr("x", x1("no") + x1.bandwidth()/2).attr("dy", "1.2em").attr("class", "alert-text").text("ADDITIONAL cuts.");
         annNo.transition().delay(1200).duration(500).attr("opacity", 1);
-
 
         // Yes Bar 2026 (-3.7M Gap)
         const gapYes = -3.7;
