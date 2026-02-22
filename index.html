@@ -74,7 +74,7 @@
         const w = 380, h = 420, margin = {top: 50, right: 40, bottom: 40, left: 50};
         
         // Padding at 0.65 makes bars narrower and the gap between them wider
-        const x = d3.scaleBand().domain(["Revenue", "Expenditure"]).range([margin.left, w - margin.right]).padding(0.65);
+        const x = d3.scaleBand().domain(["Revenue", "Expenditure"]).range([margin.left, w - margin.right]).padding(0.55);
         const y = d3.scaleLinear().domain([140, 175]).range([h - margin.bottom, margin.top]);
 
         let svgLeft, svg25, svg26AsIs, svg26;
