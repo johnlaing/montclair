@@ -124,15 +124,16 @@
             svgLeft.append("rect").attr("x", x("Revenue")).attr("y", y(154.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(154.2)).attr("fill", "#4a71be");
             addText(svgLeft, x("Revenue") + x.bandwidth()/2, y(154.2) + 20, "$154.2M", null, "white", "11px");
 
-            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(156.4)).attr("width", x.bandwidth()).attr("height", y(140) - y(156.4)).attr("fill", "#54ad66");
-            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(156.4) + 20, "$159.2M", null, "white", "11px");
+// Solid green Expenditure bar up to 159.2
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(159.2)).attr("fill", "#54ad66");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(159.2) + 20, "$159.2M", null, "white", "11px");
 
-            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(156.4) - y(159.2)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
-            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(159.2) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
+            // Dashed Cut box sitting ON TOP (from 159.2 up to 162.0)
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(162.0)).attr("width", x.bandwidth()).attr("height", y(159.2) - y(162.0)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(162.0) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
 
-            // Fixed Arrow: Stops cleanly at 156.4 base
-            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(156.4), "$5.0M", "Gap");
-
+            // Fixed Arrow: Stops cleanly at 159.2 base
+            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(159.2), "$5.0M", "Gap");
 
             // --- 2. Current State (2026-27 As is) ---
             svg26AsIs.append("rect").attr("x", x("Revenue")).attr("y", y(155.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(155.2)).attr("fill", "#4a71be");
@@ -167,13 +168,14 @@
             g25.append("rect").attr("x", x("Revenue")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(154.2) - y(159.2)).attr("fill", isYes ? "#5bace3" : "#ffc000");
             addText(g25, x("Revenue") + x.bandwidth()/2, y(159.2) + 16, isYes ? "Tax Levy" : "Advance Aid", "$5.0M", "#333", "10px");
 
-            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(156.4)).attr("width", x.bandwidth()).attr("height", y(140) - y(156.4)).attr("fill", "#54ad66");
-            addText(g25, x("Expenditure") + x.bandwidth()/2, y(156.4) + 20, "$159.2M", null, "white", "11px");
+            // Solid green Expenditure bar up to 159.2
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(159.2)).attr("fill", "#54ad66");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(159.2) + 20, "$159.2M", null, "white", "11px");
 
-            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(156.4) - y(159.2)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
-            addText(g25, x("Expenditure") + x.bandwidth()/2, y(159.2) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
-
-            // --- CHART 4: 2026-27 SCENARIO ---
+            // Dashed Cut box sitting ON TOP (from 159.2 up to 162.0)
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(162.0)).attr("width", x.bandwidth()).attr("height", y(159.2) - y(162.0)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(162.0) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");            // --- CHART 4: 2026-27 SCENARIO ---
+           
             if (!isYes) {
                 g26.append("rect").attr("x", x("Revenue")).attr("y", y(153.3)).attr("width", x.bandwidth()).attr("height", y(140) - y(153.3)).attr("fill", "#4a71be");
                 addText(g26, x("Revenue") + x.bandwidth()/2, y(153.3) + 20, "$153.3M", null, "white", "11px");
