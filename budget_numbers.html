@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montclair Referendum Impact</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdfdfd; padding: 20px; color: #333; line-height: 1.6; }
+        
+        /* Adjusted width to ensure right-side annotations don't get cut off */
+        .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1050px; margin: 0 auto; }
+        .chart-box { border: 1px solid #eee; padding: 15px; width: 460px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background: #fff; }
+        
+        .controls { text-align: center; margin-bottom: 25px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); max-width: 600px; margin-left: auto; margin-right: auto; }
+        .control-group { margin: 10px 0; }
+        .control-label { font-weight: bold; margin-right: 15px; font-size: 16px; color: #2c3e50; display: inline-block; min-width: 200px; text-align: right; }
+        .toggle-btn { padding: 10px 25px; cursor: pointer; border: 2px solid #333; background: #fff; color: #333; font-weight: bold; font-size: 14px; border-radius: 6px; transition: 0.2s; margin: 0 5px; }
+        .active { background: #333; color: white; }
+        
+        h1 { text-align: center; margin-bottom: 5px; font-size: 28px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 16px; }
+        .unit-note { font-size: 11px; color: #888; text-align: right; margin-bottom: 10px; font-style: italic; }
+        .chart-title { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #2c3e50; }
+        
+        .key-terms { max-width: 900px; margin: 40px auto; padding: 25px; background: #fff; border-left: 5px solid #2c3e50; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .term-item { margin-bottom: 12px; font-size: 14px; }
+        .term-title { font-weight: bold; color: #2c3e50; }
+        .tag-no { color: #d68910; font-weight: bold; }
+        .tag-yes { color: #2980b9; font-weight: bold; }
+
+        /* Styles for the new Tax Tables */
+        .tables-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 950px; margin: 30px auto; }
+        .tax-table-wrapper { flex: 1; min-width: 300px; max-width: 450px; }
+        .tax-table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        .tax-table th { background: #2c3e50; color: white; padding: 12px; font-size: 14px; text-align: left; }
+        .tax-table td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
+        .tax-table tr:last-child td { border-bottom: none; }
+        .table-title { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #2c3e50; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>Montclair School Budget Impact</h1>
+    <p class="subtitle">Visualizing the Referendum Questions and Future Projections</p>
+
+    <div class="controls">
+        <div class="control-group">
+            <span class="control-label">Question 1 (Facilities):</span>
+            <button id="q1-no" class="toggle-btn active" onclick="update(false, currentQ2)">Vote NO</button>
+            <button id="q1-yes" class="toggle-btn" onclick="update(true, currentQ2)">Vote YES</button>
+        </div>
+        <div class="control-group">
+            <span class="control-label">Question 2 (Budget):</span>
+            <button id="q2-no" class="toggle-btn active" onclick="update(currentQ1, false)">Vote NO</button>
+            <button id="q2-yes" class="toggle-btn" onclick="update(currentQ1, true)">Vote YES</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="chart-box">
+            <div class="chart-title">Current State (2025-26 Before Q2)</div>
+            <div class="unit-note">All figures in Millions (M)</div>
+            <div id="as-is"></div>
+        </div>
+
+        <div class="chart-box">
+            <div id="title-25" class="chart-title">2025-26 Scenario: No on Q2</div>
+            <div class="unit-note">All figures in Millions (M)</div>
+            <div id="chart-25"></div>
+        </div>
+
+        <div class="chart-box">
+            <div class="chart-title">Current State (2026-27 As is)</div>
+            <div class="unit-note">All figures in Millions (M)</div>
+            <div id="chart-26-asis"></div>
+        </div>
+
+        <div class="chart-box">
+            <div id="title-26" class="chart-title">2026-27 Scenario</div>
+            <div class="unit-note">All figures in Millions (M)</div>
+            <div id="chart-26"></div>
+        </div>
+    </div>
+
+    <div class="key-terms">
+        <h3 style="margin-top:0;">Key Terms & Context</h3>
+        <div class="term-item"><span class="term-title">Gap:</span> The difference between projected expenditures and revenue.</div>
+        <div class="term-item"><span class="tag-no">Advance of State Aid (Vote No):</span> An advance of future state aid, future year state aid amounts are lower to account for the aid already advanced.</div>
+        <div class="term-item"><span class="tag-yes">Tax Levy (Vote Yes):</span> A permanent increase in local tax revenue.</div>
+        <div class="term-item"><span class="term-title">Mid-year Cuts:</span> Cuts implemented in January 2026. $2.8M in 25-26, and $3.5m over the full year in 26-27.</div>
+        <div class="term-item"><span class="term-title">Cuts needed:</span> The amount of cuts the district will have to make to balance expenditures and revenues in 26/27 under each voting outcome scenario.</div>
+    </div>
+
+    <div class="tables-container">
+        <div class="tax-table-wrapper">
+            <div class="table-title">Q1 Tax Impact (One-Time)</div>
+            <table class="tax-table">
+                <tr><th>Assessed Home Value</th><th>Tax</th></tr>
+                <tr><td>$400,000</td><td>$698.80</td></tr>
+                <tr><td>$639,630</td><td>$1,117.43</td></tr>
+                <tr><td>$1,000,000</td><td>$1,746.99</td></tr>
+            </table>
+        </div>
+        <div class="tax-table-wrapper">
+            <div class="table-title">Q2 Tax Impact (Built into the Base)</div>
+            <table class="tax-table">
+                <tr><th>Assessed Home Value</th><th>Tax</th></tr>
+                <tr><td>$400,000</td><td>$277.20</td></tr>
+                <tr><td>$639,630</td><td>$443.26</td></tr>
+                <tr><td>$1,000,000</td><td>$693.00</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Widened the workspace so right-side annotations fit perfectly
+        const w = 460, h = 420, margin = {top: 50, right: 80, bottom: 40, left: 50};        
+        const x = d3.scaleBand().domain(["Revenue", "Expenditure"]).range([margin.left, w - margin.right]).padding(0.55);
+        const y = d3.scaleLinear().domain([140, 175]).range([h - margin.bottom, margin.top]);
+
+        let svgLeft, svg25, svg26AsIs, svg26;
+        let currentQ1 = false;
+        let currentQ2 = false;
+
+        function addText(group, cx, cy, line1, line2, color, size) {
+            const txt = group.append("text").attr("x", cx).attr("y", cy).attr("text-anchor", "middle").attr("fill", color).style("font-size", size).style("font-weight", "bold");
+            txt.append("tspan").attr("x", cx).text(line1);
+            if(line2) txt.append("tspan").attr("x", cx).attr("dy", "1.2em").text(line2);
+        }
+
+        function drawArrow(group, xRightEdge, y1, y2, label1, label2, label3) {
+            const arrowX = xRightEdge + 12; 
+            group.append("line").attr("x1", arrowX).attr("y1", y1).attr("x2", arrowX).attr("y2", y2)
+                 .attr("stroke", "#ed7d31").attr("stroke-width", 2).attr("marker-start", "url(#arrow)").attr("marker-end", "url(#arrow)");
+            
+            const txt = group.append("text").attr("x", arrowX + 6).attr("y", (y1 + y2)/2 - 10)
+                             .attr("fill", "#ed7d31").style("font-weight", "bold").style("font-size", "11px").attr("text-anchor", "start");
+            txt.append("tspan").attr("x", arrowX + 6).text(label1);
+            if(label2) txt.append("tspan").attr("x", arrowX + 6).attr("dy", "1.3em").text(label2);
+            if(label3) txt.append("tspan").attr("x", arrowX + 6).attr("dy", "1.3em").text(label3);
+        }
+
+        function init() {
+            svgLeft = d3.select("#as-is").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg25 = d3.select("#chart-25").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg26AsIs = d3.select("#chart-26-asis").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+            svg26 = d3.select("#chart-26").append("svg").attr("viewBox", `0 0 ${w} ${h}`).style("max-width", "100%").style("height", "auto");
+
+            [svgLeft, svg25, svg26AsIs, svg26].forEach(svg => {
+                svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(8).tickFormat(d => "$" + d + "M"));
+                svg.append("g").attr("transform", `translate(0,${h - margin.bottom})`).call(d3.axisBottom(x));
+                
+                svg.append("defs").append("marker")
+                    .attr("id", "arrow").attr("viewBox", "0 0 10 10").attr("refX", 5).attr("refY", 5)
+                    .attr("markerWidth", 5).attr("markerHeight", 5).attr("orient", "auto")
+                    .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("fill", "#ed7d31");
+            });
+
+            renderStatic();
+            update(false, false); 
+        }
+
+        function renderStatic() {
+            // --- 1. Current State (2025-26 Before Q2) ---
+            svgLeft.append("rect").attr("x", x("Revenue")).attr("y", y(154.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(154.2)).attr("fill", "#4a71be");
+            addText(svgLeft, x("Revenue") + x.bandwidth()/2, y(154.2) + 20, "$154.2M", null, "white", "11px");
+
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(159.2)).attr("fill", "#db7d2a");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(159.2) + 20, "$159.2M", null, "white", "11px");
+
+            svgLeft.append("rect").attr("x", x("Expenditure")).attr("y", y(162.0)).attr("width", x.bandwidth()).attr("height", y(159.2) - y(162.0)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(svgLeft, x("Expenditure") + x.bandwidth()/2, y(162.0) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
+
+            drawArrow(svgLeft, x("Revenue") + x.bandwidth(), y(154.2), y(159.2), "$5.0M", "Gap", null);
+            
+            // --- 2. Current State (2026-27 As is) ---
+            svg26AsIs.append("rect").attr("x", x("Revenue")).attr("y", y(155.3)).attr("width", x.bandwidth()).attr("height", y(140) - y(155.3)).attr("fill", "#4a71be");
+            addText(svg26AsIs, x("Revenue") + x.bandwidth()/2, y(155.3) + 20, "$155.3M", null, "white", "11px");
+
+            svg26AsIs.append("rect").attr("x", x("Expenditure")).attr("y", y(163.8)).attr("width", x.bandwidth()).attr("height", y(140) - y(163.8)).attr("fill", "#db7d2a");
+            addText(svg26AsIs, x("Expenditure") + x.bandwidth()/2, y(163.8) + 20, "$163.8M", null, "white", "11px");
+
+            svg26AsIs.append("rect").attr("x", x("Expenditure")).attr("y", y(167.3)).attr("width", x.bandwidth()).attr("height", y(163.8) - y(167.3)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(svg26AsIs, x("Expenditure") + x.bandwidth()/2, y(167.3) + 14, "Mid Year Cuts", "Annualized $3.5M", "#333", "9px");
+
+            drawArrow(svg26AsIs, x("Revenue") + x.bandwidth(), y(155.3), y(163.8), "$8.8M", "Cuts", "Needed");
+        }
+
+        function update(isQ1, isQ2) {
+            currentQ1 = isQ1;
+            currentQ2 = isQ2;
+
+            d3.select("#q1-no").classed("active", !isQ1);
+            d3.select("#q1-yes").classed("active", isQ1);
+            d3.select("#q2-no").classed("active", !isQ2);
+            d3.select("#q2-yes").classed("active", isQ2);
+
+            d3.select("#title-25").text(`2025-26 Scenario: ${isQ2 ? 'Yes' : 'No'} on Q2`);
+            d3.select("#title-26").text(`2026-27 Scenario: Q1 ${isQ1 ? 'YES' : 'NO'}, Q2 ${isQ2 ? 'YES' : 'NO'}`);
+            
+            svg25.selectAll(".dynamic-content").remove();
+            svg26.selectAll(".dynamic-content").remove();
+            
+            const g25 = svg25.append("g").attr("class", "dynamic-content");
+            const g26 = svg26.append("g").attr("class", "dynamic-content");
+
+            // --- CHART 3: 2025-26 SCENARIO (Driven by Q2) ---
+            g25.append("rect").attr("x", x("Revenue")).attr("y", y(154.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(154.2)).attr("fill", "#4a71be");
+            addText(g25, x("Revenue") + x.bandwidth()/2, y(154.2) + 20, "$154.2M", null, "white", "11px");
+            
+            g25.append("rect").attr("x", x("Revenue")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(154.2) - y(159.2)).attr("fill", isQ2 ? "#5bace3" : "#ffc000");
+            addText(g25, x("Revenue") + x.bandwidth()/2, y(159.2) + 16, isQ2 ? "Tax Levy" : "Advance Aid", "$5.0M", "#333", "10px");
+
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(159.2)).attr("width", x.bandwidth()).attr("height", y(140) - y(159.2)).attr("fill", "#db7d2a");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(159.2) + 20, "$159.2M", null, "white", "11px");
+
+            g25.append("rect").attr("x", x("Expenditure")).attr("y", y(162.0)).attr("width", x.bandwidth()).attr("height", y(159.2) - y(162.0)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(g25, x("Expenditure") + x.bandwidth()/2, y(162.0) + 14, "Mid-year Cut", "$2.8M", "#333", "10px");
+
+            // --- CHART 4: 2026-27 SCENARIO (Driven by Q1 + Q2 Combinations) ---
+            let revBase, stateAidLoss, stateAidLabel, revTotal;
+            let expBase = 163.8; 
+            let monitorTop = 164.0; 
+            let interestTop, cutTop, arrowTarget, cutsNeeded;
+            let showInterest = false;
+            let interestLabel = "";
+
+            if (!isQ1 && !isQ2) { // NO/NO
+                revBase = 153.5; stateAidLoss = 1.8; revTotal = 155.3;
+                interestTop = 164.0; cutTop = 167.5; arrowTarget = 164.0; 
+                cutsNeeded = "$10.4M"; showInterest = false;
+            } else if (isQ1 && !isQ2) { // YES/NO
+                revBase = 154.8; stateAidLoss = 0.5; revTotal = 155.3;
+                interestTop = 164.2; cutTop = 167.7; arrowTarget = 164.2; 
+                cutsNeeded = "$9.4M"; showInterest = true; interestLabel = "$252k";
+            } else if (!isQ1 && isQ2) { // NO/YES
+                revBase = 159.1; stateAidLoss = 1.3; stateAidLabel = "1.27M"; revTotal = 160.4;
+                interestTop = 164.1; cutTop = 167.6; arrowTarget = 164.1; 
+                cutsNeeded = "$4.9M"; showInterest = true; interestLabel = "$100k";
+            } else { // YES/YES
+                revBase = 160.4; stateAidLoss = 0; revTotal = 160.4;
+                interestTop = 164.1; cutTop = 167.6; arrowTarget = 164.1; 
+                cutsNeeded = "$4.9M"; showInterest = true; interestLabel = "$100k";
+            }
+
+            // Draw Revenue
+            g26.append("rect").attr("x", x("Revenue")).attr("y", y(revBase)).attr("width", x.bandwidth()).attr("height", y(140) - y(revBase)).attr("fill", "#4a71be");
+            addText(g26, x("Revenue") + x.bandwidth()/2, y(revBase) + 20, "$" + revBase + "M", null, "white", "11px");
+
+            if (stateAidLoss > 0) {
+                g26.append("rect").attr("x", x("Revenue")).attr("y", y(revTotal)).attr("width", x.bandwidth()).attr("height", y(revBase) - y(revTotal)).attr("fill", "#e8eaf6").attr("stroke", "#333").attr("stroke-dasharray", "4");
+                addText(g26, x("Revenue") + x.bandwidth()/2, y(revTotal) - 18, "Less State Aid", "$" + (stateAidLabel || stateAidLoss + "M"), "#333", "10px");
+            }
+
+            // Draw Expenditure Base
+            g26.append("rect").attr("x", x("Expenditure")).attr("y", y(expBase)).attr("width", x.bandwidth()).attr("height", y(140) - y(expBase)).attr("fill", "#db7d2a");
+            addText(g26, x("Expenditure") + x.bandwidth()/2, y(expBase) + 20, "$" + expBase + "M", null, "white", "11px");
+
+            // Draw thin Monitor Box
+            g26.append("rect").attr("x", x("Expenditure")).attr("y", y(monitorTop)).attr("width", x.bandwidth()).attr("height", y(expBase) - y(monitorTop)).attr("fill", "#e6c229").attr("stroke", "#333");
+
+            // Draw thin Interest Box
+            if (showInterest) {
+                g26.append("rect").attr("x", x("Expenditure")).attr("y", y(interestTop)).attr("width", x.bandwidth()).attr("height", y(monitorTop) - y(interestTop)).attr("fill", "#f17105").attr("stroke", "#333");
+            }
+
+            // Draw Mid-year cuts
+            g26.append("rect").attr("x", x("Expenditure")).attr("y", y(cutTop)).attr("width", x.bandwidth()).attr("height", y(interestTop) - y(cutTop)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
+            addText(g26, x("Expenditure") + x.bandwidth()/2, y(cutTop) + 14, "Mid Year Cuts", "Annualized $3.5M", "#333", "9px");
+
+            // --- Custom Side Annotations for Thin Boxes ---
+            const ax = x("Expenditure") + x.bandwidth();
+            
+            // Monitor Annotation Line & Text
+            g26.append("line").attr("x1", ax).attr("y1", y(expBase)).attr("x2", ax + 12).attr("y2", y(expBase) - 15).attr("stroke", "#e6c229").attr("stroke-width", 2);
+            addText(g26, ax + 35, y(expBase) - 20, "Monitor", "$150k", "#333", "10px");
+
+            // Interest Annotation Line & Text
+            if (showInterest) {
+                g26.append("line").attr("x1", ax).attr("y1", y(monitorTop)).attr("x2", ax + 12).attr("y2", y(monitorTop) - 35).attr("stroke", "#f17105").attr("stroke-width", 2);
+                addText(g26, ax + 35, y(monitorTop) - 40, "Interest", interestLabel, "#333", "10px");
+            }
+
+            drawArrow(g26, x("Revenue") + x.bandwidth(), y(revBase), y(arrowTarget), cutsNeeded, "Cuts", "Needed");
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
