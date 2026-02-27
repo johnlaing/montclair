@@ -15,7 +15,7 @@
         .text-section { max-width: 1050px; margin: 0 auto 25px auto; padding: 20px 25px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); box-sizing: border-box; }
         .text-section p { margin-top: 0; margin-bottom: 12px; font-size: 15px; }
         .text-section p:last-child { margin-bottom: 0; }
-        .notes-text { font-style: italic; color: #555; font-size: 14px; margin-top: 20px; }
+        .notes-text { font-style: italic; color: #555; font-size: 14px; }
         
         .controls { text-align: center; margin-bottom: 25px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); max-width: 700px; margin-left: auto; margin-right: auto; }
         
@@ -93,11 +93,14 @@
         </div>
     </div>
 
-    <div class="key-terms">
-        <h3 style="margin-top:0;">Key Terms & Context</h3>
+    <div class="key-terms" style="margin-bottom: 20px;">
+        <h3 style="margin-top:0;">The Ballot Questions</h3>
         <div class="term-item"><span class="term-title">Question 1:</span> One-time increase to the district’s tax levy to cover the $12.6 million debt accumulated over prior years. If this measure doesn’t pass then the district will take an advance of state aid to cover this amount.</div>
-        <div class="term-item"><span class="term-title">Question 2:</span> Permanent increase to the district’s tax levy to raise an additional $5 million over the amount raised for the 2025-2026 school year. If this measure doesn’t pass then the district will take an advance of state aid to cover this amount for the 2025-2026 school year.</div>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <div class="term-item" style="margin-bottom: 0;"><span class="term-title">Question 2:</span> Permanent increase to the district’s tax levy to raise an additional $5 million over the amount raised for the 2025-2026 school year. If this measure doesn’t pass then the district will take an advance of state aid to cover this amount for the 2025-2026 school year.</div>
+    </div>
+
+    <div class="key-terms" style="margin-top: 0;">
+        <h3 style="margin-top:0;">Key Terms & Context</h3>
         <div class="term-item"><span class="term-title">Gap:</span> The difference between projected expenditures and projected revenue.</div>
         <div class="term-item"><span class="tag-no">Advance of State Aid (Vote No):</span> An advance of future state aid, future year state aid amounts are lower to account for the aid already advanced (less state aid).</div>
         <div class="term-item"><span class="tag-yes">Tax Levy (Vote Yes):</span> A permanent increase in local tax revenue.</div>
@@ -105,6 +108,8 @@
         <div class="term-item"><span class="term-title">Monitor:</span> In the event of a no vote for either question, the district will take an advance of state aid. If the district takes any advance, then the state will assign a state monitor.</div>
         <div class="term-item"><span class="term-title">Interest on Tax Anticipation Notes:</span> The district must pay its debts before the tax revenue will be collected. These notes allow the district to borrow money as a bridge. The district must pay interest on this short term bridge.</div>
         <div class="term-item"><span class="term-title">Cuts needed:</span> The amount of cuts the district will have to make to balance expenditures and revenues in 26/27 under each voting outcome scenario.</div>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
         <div class="notes-text">
             Note: All numbers are projections and the state budget is not finalized yet.<br>
@@ -140,13 +145,11 @@
 
         let svg25, svg26;
         
-        // Track the current application state
         let isAsIs = true;
-        let hasVoted = false; // Tracks if it's the user's first time clicking a vote toggle
+        let hasVoted = false; 
         let currentQ1 = 'no'; 
         let currentQ2 = 'no'; 
 
-        // Separating the "Base Revenue" from the "Q2 Tax Levy" so they stack dynamically
         const scenarios26 = {
             'no-no':   { baseRev: 153.5, taxLevy: 0,   topRev: 155.3, stateAidLoss: 1.8, stateAidText: "$1.8M", expBase: 163.8, monitor: 0.15, interest: 0,     intText: "",      gapText: "$10.4M" },
             'yes-no':  { baseRev: 154.8, taxLevy: 0,   topRev: 155.3, stateAidLoss: 0.5, stateAidText: "$500k", expBase: 163.8, monitor: 0.15, interest: 0.252, intText: "$252k", gapText: "$9.4M" },
@@ -191,7 +194,7 @@
 
         function setAsIs() {
             isAsIs = true;
-            hasVoted = false; // Reset the syncing behavior when they return to baseline
+            hasVoted = false; 
             
             d3.select("#btn-asis").classed("active", true);
             d3.selectAll(".q1-btn, .q2-btn").classed("active", false);
@@ -203,7 +206,6 @@
         }
 
         function handleVote(question, vote) {
-            // First click syncs both toggles together
             if (!hasVoted) {
                 currentQ1 = vote;
                 currentQ2 = vote;
@@ -215,14 +217,12 @@
             
             isAsIs = false;
 
-            // Update UI Buttons
             d3.select("#btn-asis").classed("active", false);
             d3.selectAll(".q1-btn").classed("active", false);
             d3.select("#q1-" + currentQ1).classed("active", true);
             d3.selectAll(".q2-btn").classed("active", false);
             d3.select("#q2-" + currentQ2).classed("active", true);
 
-            // Title Updates
             d3.select("#title-25").text(`2025-26 Scenario: Q2 ${currentQ2.toUpperCase()}`);
             d3.select("#title-26").text(`26/27 Scenario: Q1 ${currentQ1.toUpperCase()}, Q2 ${currentQ2.toUpperCase()}`);
 
@@ -266,7 +266,6 @@
             // CHART 2: 26/27 SCENARIO
             // ==========================================
             if (isAsIs) {
-                // Draw the pure baseline state
                 g26.append("rect").attr("x", x("Revenue")).attr("y", y(155.3)).attr("width", x.bandwidth()).attr("height", y(140) - y(155.3)).attr("fill", "#4a71be");
                 addText(g26, x("Revenue") + x.bandwidth()/2, y(155.3) + 20, "$155.3M", null, "white", "11px");
 
@@ -276,18 +275,14 @@
                 g26.append("rect").attr("x", x("Expenditure")).attr("y", y(167.3)).attr("width", x.bandwidth()).attr("height", y(163.8) - y(167.3)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
                 addText(g26, x("Expenditure") + x.bandwidth()/2, y(167.3) + 14, "Mid Year Cuts", "Annualized $3.5M", "#333", "9px");
 
-                // Exact math fix for the baseline gap (163.8 - 155.3 = 8.5)
                 drawArrow(g26, x("Revenue") + x.bandwidth(), y(155.3), y(163.8), "$8.5M", "Cuts", "Needed");
             
             } else {
-                // Draw the selected voting scenario from the 4-item matrix
                 const s26 = scenarios26[`${currentQ1}-${currentQ2}`];
                 
-                // 1. Base Revenue Block (Solid Dark Blue)
                 g26.append("rect").attr("x", x("Revenue")).attr("y", y(s26.baseRev)).attr("width", x.bandwidth()).attr("height", y(140) - y(s26.baseRev)).attr("fill", "#4a71be");
                 addText(g26, x("Revenue") + x.bandwidth()/2, y(s26.baseRev) + 20, "$" + s26.baseRev.toFixed(1) + "M", null, "white", "11px");
 
-                // 2. Q2 Tax Levy Block (Stacks on top of base block)
                 let solidRevTop = s26.baseRev;
                 if (s26.taxLevy > 0) {
                     solidRevTop = s26.baseRev + s26.taxLevy;
@@ -295,13 +290,11 @@
                     addText(g26, x("Revenue") + x.bandwidth()/2, y(solidRevTop) + 16, "Q2 Tax Levy", "$" + s26.taxLevy.toFixed(1) + "M", "#333", "10px");
                 }
 
-                // 3. State Aid Loss (Dashed block)
                 if (s26.stateAidLoss > 0) {
                     g26.append("rect").attr("x", x("Revenue")).attr("y", y(s26.topRev)).attr("width", x.bandwidth()).attr("height", y(solidRevTop) - y(s26.topRev)).attr("fill", "#e8eaf6").attr("stroke", "#333").attr("stroke-dasharray", "4");
                     addText(g26, x("Revenue") + x.bandwidth()/2, y(s26.topRev) - 22, "Less State Aid", s26.stateAidText, "#333", "10px");
                 }
 
-                // Expenditure Base
                 g26.append("rect").attr("x", x("Expenditure")).attr("y", y(s26.expBase)).attr("width", x.bandwidth()).attr("height", y(140) - y(s26.expBase)).attr("fill", "#db7d2a");
                 addText(g26, x("Expenditure") + x.bandwidth()/2, y(s26.expBase) + 20, "$" + s26.expBase + "M", null, "white", "11px");
 
@@ -310,14 +303,12 @@
                 const cutTop = interestTop + 3.5;
                 const ax = x("Expenditure") + x.bandwidth();
 
-                // Monitor Box
                 if (s26.monitor > 0) {
                     g26.append("rect").attr("x", x("Expenditure")).attr("y", y(monitorTop)).attr("width", x.bandwidth()).attr("height", y(s26.expBase) - y(monitorTop)).attr("fill", "#e6c229").attr("stroke", "#333");
                     g26.append("line").attr("x1", ax).attr("y1", y(s26.expBase)).attr("x2", ax + 12).attr("y2", y(s26.expBase) - 10).attr("stroke", "#e6c229").attr("stroke-width", 2);
                     addText(g26, ax + 35, y(s26.expBase) - 15, "Monitor", "$150k", "#333", "10px");
                 }
 
-                // Interest Box
                 if (s26.interest > 0) {
                     g26.append("rect").attr("x", x("Expenditure")).attr("y", y(interestTop)).attr("width", x.bandwidth()).attr("height", y(monitorTop) - y(interestTop)).attr("fill", "#f17105").attr("stroke", "#333");
                     const lineEndY = s26.monitor > 0 ? y(monitorTop) - 45 : y(monitorTop) - 20;
@@ -325,11 +316,9 @@
                     addText(g26, ax + 35, lineEndY, "Interest", s26.intText, "#333", "10px");
                 }
 
-                // Mid-year cuts
                 g26.append("rect").attr("x", x("Expenditure")).attr("y", y(cutTop)).attr("width", x.bandwidth()).attr("height", y(interestTop) - y(cutTop)).attr("fill", "#e2efda").attr("stroke", "#333").attr("stroke-dasharray", "4");
                 addText(g26, x("Expenditure") + x.bandwidth()/2, y(cutTop) + 14, "Mid Year Cuts", "Annualized $3.5M", "#333", "9px");
 
-                // Gap Arrow
                 drawArrow(g26, x("Revenue") + x.bandwidth(), y(solidRevTop), y(interestTop), s26.gapText, "Cuts", "Needed");
             }
         }
